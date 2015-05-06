@@ -162,6 +162,27 @@ describe('AnimationMixin', function() {
             it('schedules an animation', function() {
               expect(MockRaf).toHaveBeenCalled();
             });
+
+            describe('for the next animation frame', function() {
+              beforeEach(function() {
+                MockRaf.next();
+              });
+
+              it('animates from the previous start value', function() {
+                expect('label').toHaveText('100');
+              });
+
+              describe('when some time has passed', function() {
+                beforeEach(function() {
+                  MockNow.tick(500);
+                  MockRaf.next();
+                });
+
+                it('animates to the expected value', function() {
+                  expect('label').toHaveText('50');
+                });
+              });
+            });
           });
         });
       });

@@ -23,11 +23,11 @@ function scheduleAnimation(context) {
       var animation = animations[name];
       if (!animation.isAnimating) return;
 
-      var {duration, easing, endValue, startTime, startValue, value} = animation;
+      var {duration, easing, endValue, startTime, startValue} = animation;
 
       var deltaTime = currentTime - startTime;
       if (deltaTime >= duration) {
-        Object.assign(animation, {isAnimating: false, startTime: currentTime, startValue: value, value: endValue});
+        Object.assign(animation, {isAnimating: false, startTime: currentTime, value: endValue});
         shouldUpdate = true;
         return;
       }
@@ -66,7 +66,7 @@ var AnimationMixin = {
     if (animation.value !== endValue && !animation.isAnimating) {
       if (!someAnimating(animations)) scheduleAnimation(this);
       var startTime = 'startTime' in options ? options.startTime : now();
-      Object.assign(animation, {isAnimating: true, value: animation.startValue, endValue, startTime});
+      Object.assign(animation, {isAnimating: true, endValue, startValue: animation.value, startTime});
     }
 
     return animation.value;
