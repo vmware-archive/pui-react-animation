@@ -2,6 +2,8 @@ var Easing = require('easing-js');
 var now = require('performance-now');
 var raf = require('raf');
 
+var privates = new WeakMap();
+
 function isNumber(obj) {
   return typeof obj === 'number' && !Number.isNaN(obj);
 }
@@ -11,16 +13,19 @@ function strip(number) {
 }
 
 function someAnimating(animations) {
-  return Object.keys(animations).some(name => animations[name].isAnimating);
+  for (var [, animation] of animations) {
+    if (animation.isAnimating) return true;
+  }
+  return false;
 }
 
 function scheduleAnimation(context) {
   raf(function() {
-    var animations = context._animations;
+    var animations = privates.get(context);
     var currentTime = now();
     var shouldUpdate = false;
-    Object.keys(animations).forEach(function(name) {
-      var animation = animations[name];
+    animations.forEach(function(animation, name) {
+      var isFunction = typeof name === 'function';
       if (!animation.isAnimating) return;
 
       var {duration, easing, endValue, startTime, startValue} = animation;
@@ -28,11 +33,12 @@ function scheduleAnimation(context) {
       var deltaTime = currentTime - startTime;
       if (deltaTime >= duration) {
         Object.assign(animation, {isAnimating: false, startTime: currentTime, value: endValue});
-        shouldUpdate = true;
-        return;
+      } else {
+        animation.value = strip(Easing[easing](deltaTime, startValue, endValue - startValue, duration));
       }
-      animation.value = strip(Easing[easing](deltaTime, startValue, endValue - startValue, duration));
-      shouldUpdate = true;
+
+      shouldUpdate = shouldUpdate || !isFunction;
+      if (isFunction) name(animation.value);
     });
 
     if (shouldUpdate) context.forceUpdate();
@@ -42,7 +48,7 @@ function scheduleAnimation(context) {
 
 var AnimationMixin = {
   componentWillUnmount() {
-    this._animations = null;
+    privates.delete(this);
   },
 
   shouldAnimate() {
@@ -50,17 +56,18 @@ var AnimationMixin = {
   },
 
   animate(name, endValue, duration, options = {}) {
-    this._animations = this._animations || {};
+    var animations = privates.get(this);
+    if (!animations) {
+      privates.set(this, animations = new Map());
+    }
 
-    var animations = this._animations;
-
-    var animation = animations[name];
+    var animation = animations.get(name);
     var shouldAnimate = this.shouldAnimate() && options.animation !== false;
     if (!animation || !shouldAnimate || !isNumber(endValue)) {
       var easing = options.easing || 'linear';
       var startValue = isNumber(options.startValue) && shouldAnimate ? options.startValue : endValue;
       animation = {duration, easing, endValue, isAnimating: false, startValue, value: startValue};
-      animations[name] = animation;
+      animations.set(name, animation);
     }
 
     if (animation.value !== endValue && !animation.isAnimating) {

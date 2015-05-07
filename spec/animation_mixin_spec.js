@@ -24,7 +24,58 @@ describe('AnimationMixin', function() {
   });
 
   describe('#animate', function() {
-    describe('when animating one property', function() {
+    describe('when animating a function', function() {
+      var animateSpy;
+      beforeEach(function() {
+        MockNow.reset();
+        animateSpy = jasmine.createSpy('animate');
+        var Klass = React.createClass({
+          mixins: [AnimationMixin],
+          click() {
+            this.animate(animateSpy, 100, 1000, {startValue: 0});
+          },
+          render() {
+            return <div onClick={this.click}/>
+          }
+        });
+        subject = React.render(<Klass/>, root);
+        $(subject.getDOMNode()).simulate('click');
+        MockRaf.next();
+      });
+
+      it('starts animating from the startValue position', function() {
+        expect(animateSpy).toHaveBeenCalledWith(0);
+      });
+
+      it('animates to the endValue', function() {
+        animateSpy.calls.reset();
+        MockNow.tick(100);
+        MockRaf.next();
+        expect(animateSpy).toHaveBeenCalledWith(10);
+
+        animateSpy.calls.reset();
+        MockNow.tick(400);
+        MockRaf.next();
+        expect(animateSpy).toHaveBeenCalledWith(50);
+
+        animateSpy.calls.reset();
+        MockNow.tick(500);
+        MockRaf.next();
+        expect(animateSpy).toHaveBeenCalledWith(100);
+      });
+
+      it('stops animating after reaching the endValue', function() {
+        MockNow.tick(1000);
+        MockRaf.next();
+
+        animateSpy.calls.reset();
+        MockNow.tick(100);
+        MockRaf.next();
+        expect(animateSpy).not.toHaveBeenCalled();
+      })
+    });
+
+    describe('when animating a property', function() {
       describe('when it has an optional start value', function() {
         beforeEach(function() {
           MockNow.reset();
