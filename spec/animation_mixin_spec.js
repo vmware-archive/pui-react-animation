@@ -35,7 +35,7 @@ describe('AnimationMixin', function() {
             this.animate(animateSpy, 100, 1000, {startValue: 0});
           },
           render() {
-            return <div onClick={this.click}/>
+            return (<div onClick={this.click}/>);
           }
         });
         subject = React.render(<Klass/>, root);
@@ -72,7 +72,7 @@ describe('AnimationMixin', function() {
         MockNow.tick(100);
         MockRaf.next();
         expect(animateSpy).not.toHaveBeenCalled();
-      })
+      });
     });
 
     describe('when animating a property', function() {
