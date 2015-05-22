@@ -24,7 +24,7 @@ function scheduleAnimation(context) {
     var animations = privates.get(context);
     var currentTime = now();
     var shouldUpdate = false;
-    animations.forEach(function(animation, name) {
+    animations && animations.forEach(function(animation, name) {
       var isFunction = typeof name === 'function';
       if (!animation.isAnimating) return;
 
@@ -42,7 +42,7 @@ function scheduleAnimation(context) {
     });
 
     if (shouldUpdate) context.forceUpdate();
-    if (someAnimating(animations)) scheduleAnimation(context);
+    if (animations && someAnimating(animations)) scheduleAnimation(context);
   });
 }
 

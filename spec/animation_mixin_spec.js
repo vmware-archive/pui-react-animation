@@ -263,5 +263,31 @@ describe('AnimationMixin', function() {
         });
       });
     });
+
+    describe('when the animations are released from memory', function() {
+      beforeEach(function() {
+        MockNow.reset();
+        var Klass = React.createClass({
+          propTypes: {
+            x: React.PropTypes.number,
+            y: React.PropTypes.number
+          },
+          mixins: [AnimationMixin],
+          render() {
+            var x = this.animate('x', this.props.x, 1000, {easing: 'linear', startValue: 200});
+            var y = this.animate('y', this.props.y, 1000, {easing: 'linear'});
+            return <form><label>{x}</label><em>{y}</em></form>;
+          }
+        });
+        subject = React.render(<Klass x={100} y={0}/>, root);
+        MockNow.tick(100);
+        MockRaf.next();
+        React.unmountComponentAtNode(root);
+      });
+
+      it('does not crash in the next animation frame', function() {
+        expect(() => MockRaf.next()).not.toThrow();
+      });
+    });
   });
 });

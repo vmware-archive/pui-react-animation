@@ -1,6 +1,6 @@
 {
   "name": "pui-react-animation",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "animation mixin for react",
   "main": "animation_mixin.js",
   "scripts": {
