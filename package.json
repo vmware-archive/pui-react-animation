@@ -47,7 +47,7 @@
     "babel-runtime": "^5.5.4",
     "easing-js": "^1.0.1",
     "performance-now": "^0.2.0",
-    "raf": "^2.0.4",
-    "react": ">=0.12.2"
+    "raf": "^3.0.0",
+    "react": "^0.13.3"
   }
 }
