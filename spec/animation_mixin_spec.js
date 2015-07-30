@@ -236,6 +236,28 @@ describe('AnimationMixin', function() {
             });
           });
         });
+
+        describe('when calling animate with a value', function() {
+          var result;
+          beforeEach(function() {
+            result = subject.animate('x', 200);
+          });
+
+          it('returns the value', function() {
+            expect(result).toEqual(200);
+          });
+
+          describe('when the duration time has passed', function() {
+            beforeEach(function() {
+              MockNow.tick(1000);
+              MockRaf.next();
+            });
+
+            it('cancels any existing animation', function() {
+              expect('label').toHaveText('200');
+            });
+          });
+        });
       });
     });
 

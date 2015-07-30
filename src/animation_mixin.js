@@ -70,6 +70,11 @@ var AnimationMixin = {
       animations.set(name, animation);
     }
 
+    if (!duration) {
+      Object.assign(animation, {endValue, value: endValue});
+      animations.set(name, animation);
+    }
+
     if (animation.value !== endValue && !animation.isAnimating) {
       if (!someAnimating(animations)) scheduleAnimation(this);
       var startTime = 'startTime' in options ? options.startTime : now();
