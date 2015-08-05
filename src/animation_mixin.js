@@ -41,8 +41,8 @@ function scheduleAnimation(context) {
       if (isFunction) name(animation.value);
     });
 
-    if (shouldUpdate) context.forceUpdate();
     if (animations && someAnimating(animations)) scheduleAnimation(context);
+    if (shouldUpdate) context.forceUpdate();
   });
 }
 
