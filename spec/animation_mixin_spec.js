@@ -4,19 +4,6 @@ describe('AnimationMixin', function() {
   var AnimationMixin, subject;
   beforeEach(function() {
     AnimationMixin = require('../src/animation_mixin');
-    var Klass = React.createClass({
-      mixins: [AnimationMixin],
-      propTypes: {
-        x: React.PropTypes.number,
-        y: React.PropTypes.number
-      },
-      render() {
-        var x = this.animate('x', this.props.x, 1000, {easing: 'linear'});
-        var y = this.animate('y', this.props.y, 1000, {easing: 'linear'});
-        return <form><label>{x}</label><em>{y}</em></form>;
-      }
-    });
-    subject = React.render(<Klass x={0} y={0}/>, root);
   });
 
   afterEach(function() {
@@ -24,6 +11,46 @@ describe('AnimationMixin', function() {
   });
 
   describe('#animate', function() {
+    describe('when the end value of the animation changes whenever it renders', function() {
+      beforeEach(function() {
+        var counter = 1;
+        var Klass = React.createClass({
+          mixins: [AnimationMixin],
+
+          render() {
+            var time = this.animate('time', counter++, 1000, {easing: 'linear'});
+            return <form><label>{time}</label></form>;
+          }
+        });
+        subject = React.render(<Klass/>, root);
+      });
+
+      it('renders in the start animation position', function() {
+        expect('label').toHaveText('1');
+      });
+
+      it('does not animate', function() {
+        expect(MockRaf).not.toHaveBeenCalled();
+      });
+
+      describe('when the component is re-rendered', function() {
+        beforeEach(function() {
+          subject.setProps({id: 'id'});
+          MockNow.tick(1000);
+          MockRaf.next();
+        });
+
+        it('animates', function() {
+          expect(MockRaf.calls.count()).toBe(2);
+          expect(MockRaf).toHaveBeenCalled();
+        });
+
+        it('animates the value to the next count', function() {
+          expect('label').toHaveText('2');
+        });
+      });
+    });
+
     describe('when animating a function', function() {
       var animateSpy;
       beforeEach(function() {
@@ -165,6 +192,19 @@ describe('AnimationMixin', function() {
 
       describe('when the property changes', function() {
         beforeEach(function() {
+          var Klass = React.createClass({
+            mixins: [AnimationMixin],
+            propTypes: {
+              x: React.PropTypes.number,
+              y: React.PropTypes.number
+            },
+            render() {
+              var x = this.animate('x', this.props.x, 1000, {easing: 'linear'});
+              var y = this.animate('y', this.props.y, 1000, {easing: 'linear'});
+              return <form><label>{x}</label><em>{y}</em></form>;
+            }
+          });
+          subject = React.render(<Klass x={0} y={0}/>, root);
           subject.setProps({x: 100});
         });
 
@@ -262,6 +302,21 @@ describe('AnimationMixin', function() {
     });
 
     describe('when animating more than one property', function() {
+      beforeEach(function() {
+        var Klass = React.createClass({
+          mixins: [AnimationMixin],
+          propTypes: {
+            x: React.PropTypes.number,
+            y: React.PropTypes.number
+          },
+          render() {
+            var x = this.animate('x', this.props.x, 1000, {easing: 'linear'});
+            var y = this.animate('y', this.props.y, 1000, {easing: 'linear'});
+            return <form><label>{x}</label><em>{y}</em></form>;
+          }
+        });
+        subject = React.render(<Klass x={0} y={0}/>, root);
+      });
       describe('when the properties change', function() {
         beforeEach(function() {
           subject.setProps({x: 100, y: 100});
