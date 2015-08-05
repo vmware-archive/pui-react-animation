@@ -6,7 +6,7 @@
   },
 
   "ecmaFeatures": {
-    "module": true,
+    "modules": true
   },
 
   "parser": "babel-eslint",
