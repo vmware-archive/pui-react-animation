@@ -64,8 +64,8 @@ var AnimationMixin = {
     var animation = animations.get(name);
     var shouldAnimate = this.shouldAnimate() && options.animation !== false;
     if (!animation || !shouldAnimate || !isNumber(endValue)) {
-      var easing = options.easing || 'linear';
-      var startValue = isNumber(options.startValue) && shouldAnimate ? options.startValue : endValue;
+      let easing = options.easing || 'linear';
+      let startValue = isNumber(options.startValue) && shouldAnimate ? options.startValue : endValue;
       animation = {duration, easing, endValue, isAnimating: false, startValue, value: startValue};
       animations.set(name, animation);
     }
@@ -78,7 +78,10 @@ var AnimationMixin = {
     if (animation.value !== endValue && !animation.isAnimating) {
       if (!someAnimating(animations)) scheduleAnimation(this);
       var startTime = 'startTime' in options ? options.startTime : now();
-      Object.assign(animation, {isAnimating: true, endValue, startValue: animation.value, startTime});
+      duration = duration || animation.duration;
+      let easing = options.easing || animation.easing;
+      let startValue = animation.value;
+      Object.assign(animation, { isAnimating: true, endValue, startValue, startTime, duration, easing});
     }
 
     return animation.value;

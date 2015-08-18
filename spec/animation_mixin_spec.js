@@ -277,7 +277,7 @@ describe('AnimationMixin', function() {
           });
         });
 
-        describe('when calling animate with a value', function() {
+        describe('calling animate with a value but no duration while that animation is in progress', function() {
           var result;
           beforeEach(function() {
             result = subject.animate('x', 200);
@@ -296,6 +296,43 @@ describe('AnimationMixin', function() {
             it('cancels any existing animation', function() {
               expect('label').toHaveText('200');
             });
+          });
+        });
+      });
+
+      describe('calling animate with a value but no duration on a new animation', function() {
+        beforeEach(function() {
+          var Klass = React.createClass({
+            mixins: [AnimationMixin],
+            propTypes: {
+              x: React.PropTypes.number,
+              duration: React.PropTypes.number
+            },
+
+            render() {
+              var {duration} = this.props;
+              var x = this.animate('x', this.props.x, duration);
+              return <form><label>{x}</label></form>;
+            }
+          });
+          subject = React.render(<Klass x={100}/>, root);
+        });
+
+        it('renders in the end animation position', function() {
+          expect('label').toHaveText('100');
+        });
+
+        describe('when that animation is used again', function() {
+          const duration = 1000;
+          beforeEach(function() {
+            subject.setProps({duration, x: 0});
+          });
+
+          it('animates with the new duration', function() {
+            expect('label').toHaveText('100');
+            MockNow.tick(500);
+            MockRaf.next();
+            expect('label').toHaveText('50');
           });
         });
       });
