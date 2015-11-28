@@ -7,7 +7,7 @@ describe('AnimationMixin', function() {
   });
 
   afterEach(function() {
-    React.unmountComponentAtNode(root);
+    ReactDOM.unmountComponentAtNode(root);
   });
 
   describe('#animate', function() {
@@ -22,7 +22,7 @@ describe('AnimationMixin', function() {
             return <form><label>{time}</label></form>;
           }
         });
-        subject = React.render(<Klass/>, root);
+        subject = ReactDOM.render(<Klass/>, root);
       });
 
       it('renders in the start animation position', function() {
@@ -35,7 +35,7 @@ describe('AnimationMixin', function() {
 
       describe('when the component is re-rendered', function() {
         beforeEach(function() {
-          subject.setProps({id: 'id'});
+          subject::setProps({id: 'id'});
           MockNow.tick(1000);
           MockRaf.next();
         });
@@ -65,8 +65,8 @@ describe('AnimationMixin', function() {
             return (<div onClick={this.click}/>);
           }
         });
-        subject = React.render(<Klass/>, root);
-        $(subject.getDOMNode()).simulate('click');
+        subject = ReactDOM.render(<Klass/>, root);
+        $(ReactDOM.findDOMNode(subject)).simulate('click');
         MockRaf.next();
       });
 
@@ -118,7 +118,7 @@ describe('AnimationMixin', function() {
               return <form><label>{x}</label><em>{y}</em></form>;
             }
           });
-          subject = React.render(<Klass x={100} y={0}/>, root);
+          subject = ReactDOM.render(<Klass x={100} y={0}/>, root);
           MockNow.tick(100);
           MockRaf.next();
         });
@@ -154,9 +154,9 @@ describe('AnimationMixin', function() {
               return <form><label>{x}</label><em>{y}</em></form>;
             }
           });
-          subject = React.render(<Klass x={0} y={0}/>, root);
+          subject = ReactDOM.render(<Klass x={0} y={0}/>, root);
           MockRaf.calls.reset();
-          subject.setProps({x: null});
+          subject::setProps({x: null});
         });
 
         it('does not animate', function() {
@@ -179,8 +179,8 @@ describe('AnimationMixin', function() {
               return <form><label>{x}</label><em>{y}</em></form>;
             }
           });
-          subject = React.render(<Klass x={0} y={0}/>, root);
-          subject.setProps({x: 100});
+          subject = ReactDOM.render(<Klass x={0} y={0}/>, root);
+          subject::setProps({x: 100});
           MockNow.tick(100);
           MockRaf.next();
         });
@@ -204,8 +204,8 @@ describe('AnimationMixin', function() {
               return <form><label>{x}</label><em>{y}</em></form>;
             }
           });
-          subject = React.render(<Klass x={0} y={0}/>, root);
-          subject.setProps({x: 100});
+          subject = ReactDOM.render(<Klass x={0} y={0}/>, root);
+          subject::setProps({x: 100});
         });
 
         it('renders in the start animation position', function() {
@@ -247,7 +247,7 @@ describe('AnimationMixin', function() {
           describe('when animating the property again', function() {
             beforeEach(function() {
               MockRaf.calls.reset();
-              subject.setProps({x: 0});
+              subject::setProps({x: 0});
             });
 
             it('schedules an animation', function() {
@@ -315,7 +315,7 @@ describe('AnimationMixin', function() {
               return <form><label>{x}</label></form>;
             }
           });
-          subject = React.render(<Klass x={100}/>, root);
+          subject = ReactDOM.render(<Klass x={100}/>, root);
         });
 
         it('renders in the end animation position', function() {
@@ -325,7 +325,7 @@ describe('AnimationMixin', function() {
         describe('when that animation is used again', function() {
           const duration = 1000;
           beforeEach(function() {
-            subject.setProps({duration, x: 0});
+            subject::setProps({duration, x: 0});
           });
 
           it('animates with the new duration', function() {
@@ -352,11 +352,11 @@ describe('AnimationMixin', function() {
             return <form><label>{x}</label><em>{y}</em></form>;
           }
         });
-        subject = React.render(<Klass x={0} y={0}/>, root);
+        subject = ReactDOM.render(<Klass x={0} y={0}/>, root);
       });
       describe('when the properties change', function() {
         beforeEach(function() {
-          subject.setProps({x: 100, y: 100});
+          subject::setProps({x: 100, y: 100});
         });
 
         it('renders in the start animation position', function() {
@@ -393,10 +393,10 @@ describe('AnimationMixin', function() {
             return <form><label>{x}</label><em>{y}</em></form>;
           }
         });
-        subject = React.render(<Klass x={100} y={0}/>, root);
+        subject = ReactDOM.render(<Klass x={100} y={0}/>, root);
         MockNow.tick(100);
         MockRaf.next();
-        React.unmountComponentAtNode(root);
+        ReactDOM.unmountComponentAtNode(root);
       });
 
       it('does not crash in the next animation frame', function() {

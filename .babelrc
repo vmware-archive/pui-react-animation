@@ -1,5 +1,8 @@
 {
-  "loose": "all",
-  "stage": 1,
-  "optional": ["runtime"]
+  "presets": ["es2015-loose", "react", "stage-0"],
+  "plugins": [
+    "transform-object-assign",
+    "transform-react-display-name",
+    "transform-runtime"
+  ]
 }
