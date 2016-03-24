@@ -3,6 +3,6 @@
 
 Animation mixin for for react, updates the react component in a request animation frame.
 
-Developed with React 0.12
+Developed with React 0.14.x
 
-(c) Copyright 2015 Pivotal Software, Inc. All Rights Reserved.
+(c) Copyright 2016 Pivotal Software, Inc. All Rights Reserved.
