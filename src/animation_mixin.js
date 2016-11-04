@@ -1,8 +1,6 @@
-var Easing = require('easing-js');
-var now = require('performance-now');
-var raf = require('raf');
+const Easing = require('easing-js');
 
-var privates = new WeakMap();
+const privates = new WeakMap();
 
 function isNumber(obj) {
   return typeof obj === 'number' && !Number.isNaN(obj);
@@ -13,24 +11,24 @@ function strip(number) {
 }
 
 function someAnimating(animations) {
-  for (var [, animation] of animations) {
+  for (const [, animation] of animations) {
     if (animation.isAnimating) return true;
   }
   return false;
 }
 
 function scheduleAnimation(context) {
-  raf(function() {
-    var animations = privates.get(context);
-    var currentTime = now();
-    var shouldUpdate = false;
+  AnimationMixin.raf(function() {
+    const animations = privates.get(context);
+    const currentTime = AnimationMixin.now();
+    let shouldUpdate = false;
     animations && animations.forEach(function(animation, name) {
-      var isFunction = typeof name === 'function';
+      const isFunction = typeof name === 'function';
       if (!animation.isAnimating) return;
 
-      var {duration, easing, endValue, startTime, startValue} = animation;
+      const {duration, easing, endValue, startTime, startValue} = animation;
 
-      var deltaTime = currentTime - startTime;
+      const deltaTime = currentTime - startTime;
       if (deltaTime >= duration) {
         Object.assign(animation, {isAnimating: false, startTime: currentTime, value: endValue});
       } else {
@@ -46,7 +44,7 @@ function scheduleAnimation(context) {
   });
 }
 
-var AnimationMixin = {
+const AnimationMixin = {
   componentWillUnmount() {
     privates.delete(this);
   },
@@ -55,17 +53,21 @@ var AnimationMixin = {
     return true;
   },
 
+  raf: require('raf'),
+
+  now: require('performance-now'),
+
   animate(name, endValue, duration, options = {}) {
-    var animations = privates.get(this);
+    let animations = privates.get(this);
     if (!animations) {
       privates.set(this, animations = new Map());
     }
 
-    var animation = animations.get(name);
-    var shouldAnimate = this.shouldAnimate() && options.animation !== false;
+    let animation = animations.get(name);
+    const shouldAnimate = this.shouldAnimate() && options.animation !== false;
     if (!animation || !shouldAnimate || !isNumber(endValue)) {
-      let easing = options.easing || 'linear';
-      let startValue = isNumber(options.startValue) && shouldAnimate ? options.startValue : endValue;
+      const easing = options.easing || 'linear';
+      const startValue = isNumber(options.startValue) && shouldAnimate ? options.startValue : endValue;
       animation = {duration, easing, endValue, isAnimating: false, startValue, value: startValue};
       animations.set(name, animation);
     }
@@ -77,10 +79,10 @@ var AnimationMixin = {
 
     if (animation.value !== endValue && !animation.isAnimating) {
       if (!someAnimating(animations)) scheduleAnimation(this);
-      var startTime = 'startTime' in options ? options.startTime : now();
+      const startTime = 'startTime' in options ? options.startTime : AnimationMixin.now();
       duration = duration || animation.duration;
-      let easing = options.easing || animation.easing;
-      let startValue = animation.value;
+      const easing = options.easing || animation.easing;
+      const startValue = animation.value;
       Object.assign(animation, { isAnimating: true, endValue, startValue, startTime, duration, easing});
     }
 
