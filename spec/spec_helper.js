@@ -1,27 +1,21 @@
-require('babel-polyfill');
+import 'babel-polyfill';
+import 'jasmine_dom_matchers';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import jQuery from 'jquery';
+import MockRaf from 'raf';
+import MockNow from 'performance-now';
+import {setProps} from 'pivotal-js-react-test-helpers';
 
-var React = require('react');
-var ReactDOM = require('react-dom');
-var jQuery = require('jquery');
-var MockRaf = require('raf');
-var MockNow = require('performance-now');
+Object.assign(global, {$: jQuery, jQuery});
 
-require('jasmine_dom_matchers');
-
-Object.assign(global, {
-  $: jQuery,
-  jQuery,
-  MockRaf,
-  MockNow,
-  React,
-  ReactDOM
-}, require('./support/react_helper'));
-
-beforeEach(function() {
+beforeEach(() => {
   $('body').find('#root').remove().end().append('<main id="root"/>');
 });
 
-afterEach(function() {
+afterEach(() => {
   MockNow.reset();
   MockRaf.reset();
 });
+
+export {React, ReactDOM, MockRaf, MockNow, setProps};
