@@ -1,6 +1,6 @@
-import * as Easing from 'easing-js';
-import now from 'performance-now';
-import raf from 'raf';
+import * as injectedEasing from 'easing-js';
+import injectedNow from 'performance-now';
+import injectedRaf from 'raf';
 
 const privates = new WeakMap();
 
@@ -20,16 +20,16 @@ function reset() {
   privates.delete(this);
 }
 
-export default function injector({injectedRaf = raf, injectedNow = now, injectedEasing = Easing} = {}) {
+export default function injector({raf = injectedRaf, now = injectedNow, Easing = injectedEasing} = {}) {
   function getEasing(easing) {
-    return typeof easing === 'function' ? easing : injectedEasing[easing];
+    return typeof easing === 'function' ? easing : Easing[easing];
   }
 
   function scheduleAnimation(context) {
-    injectedRaf(() => {
+    raf(() => {
       const animations = privates.get(context);
       if (!animations) return;
-      const currentTime = injectedNow();
+      const currentTime = now();
       const shouldForceUpdate = Object.values(animations).reduce((shouldForceUpdate, animation) => {
         if (!animation.isAnimating) return shouldForceUpdate;
 
@@ -73,7 +73,7 @@ export default function injector({injectedRaf = raf, injectedNow = now, injected
 
     if (animation.value !== endValue && !animation.isAnimating) {
       if (!someAnimating(animations)) scheduleAnimation(this);
-      const startTime = 'startTime' in options ? options.startTime : injectedNow();
+      const startTime = 'startTime' in options ? options.startTime : now();
       duration = duration || animation.duration;
       const easing = getEasing(options.easing || animation.easing);
       const startValue = animation.value;
