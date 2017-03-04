@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
-    "easing-js": "^1.0.1",
+    "easing-js": "^1.1.1",
     "performance-now": "^0.2.0",
     "raf": "^3.0.0",
     "react": ">=0.13.3"
