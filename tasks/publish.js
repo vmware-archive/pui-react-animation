@@ -1,5 +1,5 @@
-var gulp = require('gulp');
-var npm = require('npm');
+import gulp from 'gulp';
+import npm from 'npm';
 
 gulp.task('publish', ['build'], function(){
   npm.load({}, function(error) {

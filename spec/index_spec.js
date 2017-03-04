@@ -1,5 +1,5 @@
 import {MockNow, MockRaf, React, ReactDOM, setProps} from './spec_helper';
-import AnimationMixin from '../src/animation_mixin';
+import AnimationMixin from '../src/index';
 
 describe('AnimationMixin', () => {
   let subject;

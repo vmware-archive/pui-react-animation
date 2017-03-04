@@ -1,27 +1,25 @@
-var gulp = require('gulp');
-var plugins = require('gulp-load-plugins')();
-var runSequence = require('run-sequence');
-var webpack = require('webpack-stream');
-
-gulp.task('spec', callback => runSequence('lint', 'jasmine-ci', callback));
+import gulp from 'gulp';
+import plumber from 'gulp-plumber';
+import jasmineBrowser from 'gulp-jasmine-browser';
+import webpack from 'webpack-stream';
 
 function testAssets(options = {}) {
-  var webpackConfig = require('../config/webpack.config');
+  let webpackConfig = require('../config/webpack.config');
   webpackConfig = {...webpackConfig, ...options};
   return gulp.src('spec/**/*_spec.js')
-    .pipe(plugins.plumber())
+    .pipe(plumber())
     .pipe(webpack(webpackConfig));
 }
 
-gulp.task('jasmine-ci', function() {
+gulp.task('spec', function() {
   return testAssets({watch: false})
-    .pipe(plugins.jasmineBrowser.specRunner({console: true}))
-    .pipe(plugins.jasmineBrowser.headless());
+    .pipe(jasmineBrowser.specRunner({console: true}))
+    .pipe(jasmineBrowser.headless());
 });
 
 gulp.task('jasmine', function() {
-  var plugin = new (require('gulp-jasmine-browser/webpack/jasmine-plugin'))();
+  const plugin = new (require('gulp-jasmine-browser/webpack/jasmine-plugin'))();
   return testAssets({plugins: [plugin]})
-    .pipe(plugins.jasmineBrowser.specRunner())
-    .pipe(plugins.jasmineBrowser.server());
+    .pipe(jasmineBrowser.specRunner())
+    .pipe(jasmineBrowser.server());
 });

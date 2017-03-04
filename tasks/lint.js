@@ -1,10 +1,11 @@
-var gulp = require('gulp');
-var plugins = require('gulp-load-plugins')();
+import gulp from 'gulp';
+import plumber from 'gulp-plumber';
+import eslint from 'gulp-eslint';
 
 gulp.task('lint', function() {
   return gulp.src(['gulpfile.js', 'tasks/**/*.js', 'src/**/*.js', 'spec/**/*.js'])
-    .pipe(plugins.plumber())
-    .pipe(plugins.eslint())
-    .pipe(plugins.eslint.format('stylish'))
-    .pipe(plugins.eslint.failOnError());
+    .pipe(plumber())
+    .pipe(eslint())
+    .pipe(eslint.format('stylish'))
+    .pipe(eslint.failOnError());
 });
