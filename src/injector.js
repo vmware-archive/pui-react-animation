@@ -1,4 +1,4 @@
-import Easing from 'easing-js';
+import * as Easing from 'easing-js';
 import now from 'performance-now';
 import raf from 'raf';
 
@@ -12,19 +12,19 @@ function strip(number) {
   return parseFloat(number.toPrecision(12));
 }
 
-function getEasing(easing) {
-  return typeof easing === 'function' ? easing : Easing[easing];
-}
-
 function someAnimating(animations) {
   return Object.values(animations).some(animation => animation.isAnimating);
 }
 
-function componentWillUnmount() {
+function reset() {
   privates.delete(this);
 }
 
-export default function injector({injectedRaf = raf, injectedNow = now} = {}) {
+export default function injector({injectedRaf = raf, injectedNow = now, injectedEasing = Easing} = {}) {
+  function getEasing(easing) {
+    return typeof easing === 'function' ? easing : injectedEasing[easing];
+  }
+
   function scheduleAnimation(context) {
     injectedRaf(() => {
       const animations = privates.get(context);
@@ -82,5 +82,5 @@ export default function injector({injectedRaf = raf, injectedNow = now} = {}) {
     }
 
     return animation.value;
-  }, {componentWillUnmount});
+  }, {reset});
 }
